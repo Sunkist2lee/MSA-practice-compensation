@@ -21,5 +21,6 @@ public class StockDecreased extends AbstractEvent {
     public StockDecreased() {
         super();
     }
+
 }
 //>>> DDD / Domain Event

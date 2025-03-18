@@ -24,57 +24,25 @@ public class Order  {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     
-    
-    
-    
     private Long id;
-    
-    
-    
-    
     private String productId;
-    
-    
-    
-    
     private Integer qty;
-    
-    
-    
-    
     private String customerId;
-    
-    
-    
-    
     private Double amount;
-    
-    
-    
-    
     private String status;
-    
-    
-    
-    
     private String address;
 
     @PostPersist
     public void onPostPersist(){
-    Inventory inventory = OrderApplication.applicationContext
-        .getBean(compensation.external.InventoryService.class)
-        .checkStock(get??);
-
-
         OrderPlaced orderPlaced = new OrderPlaced(this);
         orderPlaced.publishAfterCommit();
+    }
 
+    @PreRemove
+    public void onPreRemove(){
 
-
-        OrderCancelled orderCancelled = new OrderCancelled(this);
-        orderCancelled.publishAfterCommit();
-
-    
+            OrderCancelled orderCancelled = new OrderCancelled(this);
+            orderCancelled.publishAfterCommit();
     }
 
     public static OrderRepository repository(){
@@ -84,34 +52,16 @@ public class Order  {
 
 
 
-
-//<<< Clean Arch / Port Method
-    public static void updateStatus(OutOfStock outOfStock){
-        
-        //implement business logic here:
-        
-        /** Example 1:  new item 
-        Order order = new Order();
-        repository().save(order);
-
-        */
-
-        /** Example 2:  finding and process
-        
-
-        repository().findById(outOfStock.get???()).ifPresent(order->{
-            
-            order // do something
-            repository().save(order);
-
-
-         });
-        */
-
-        
+    public static void updateStatus(OutOfStock outOfStock) {
+            repository().findById(outOfStock.getOrderId()).ifPresent(order ->{
+                
+                order.setStatus("OrderCancelled");
+                repository().save(order);
+            });
     }
+}
+    
 //>>> Clean Arch / Port Method
 
 
-}
 //>>> DDD / Aggregate Root
